@@ -370,9 +370,6 @@ function addcustomtype_admin_styles() {
 	/*
 	 * It will be called only on your plugin admin page, enqueue our script here
      */
-	if (($_SERVER['PHP_SELF'] == '/wp-admin/post-new.php?post_type=dealentry') || 
-    	($_SERVER['PHP_SELF'] == '/wp-admin/post.php?post_type=dealentry'))
-    {
 		echo "
 		<style type='text/css' media='all'>
 	    	@import '".WP_ADDCUSTOMTYPE_URL."/css/styles/blue.css';
@@ -382,7 +379,6 @@ function addcustomtype_admin_styles() {
 			@import '".WP_ADDCUSTOMTYPE_URL."/includes/js/fancybox/jquery.fancybox.css';
 		</style>
 		\n";
-    }
     
 	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
 	wp_register_script('textcounter', WP_ADDCUSTOMTYPE_URL . '/includes/js/textcounter.js');
