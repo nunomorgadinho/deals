@@ -370,6 +370,7 @@ function addcustomtype_admin_styles() {
 	/*
 	 * It will be called only on your plugin admin page, enqueue our script here
      */
+	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
 	wp_register_script('textcounter', WP_ADDCUSTOMTYPE_URL . '/includes/js/textcounter.js');
 	wp_register_script('global',    WP_ADDCUSTOMTYPE_URL . '/includes/js/global.js');
 	wp_register_script('iconified', WP_ADDCUSTOMTYPE_URL . '/includes/js/iconified.js');
