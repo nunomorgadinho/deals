@@ -152,7 +152,10 @@ class DealsDb {
 	function admin_init() 
 	{
 		global $blog_id;
-			
+		
+		wp_enqueue_script('jquery');
+		
+		
 		// Custom meta boxes for the edit deal screen
 		add_meta_box("p30-meta", __('Deal Details', 'addcustomtype'), array(&$this, "meta_options"), "dealentry", "normal", "low");
 	}
@@ -178,6 +181,11 @@ class DealsDb {
 		$edition_max = (isset($custom["edition_max"][0])) ? $custom["edition_max"][0] : '';
 		$primary_or_secondary = (isset($custom["primary_or_secondary"][0])) ? $custom["primary_or_secondary"][0] : '';										
 
+		echo "<script type='text/javascript'>
+                  jQuery(document).ready(function(){
+                      jQuery('#date_sold').datepicker();
+                  });
+              </script>";
 ?>
 	<div class="classform" id="formbox">
 	<div id="err_msg" style="background: red"></div>
@@ -402,12 +410,6 @@ function addcustomtype_admin_scripts()
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_script('mydatepicker');
-	
-	echo "<script type='text/javascript'>
-                  jQuery(document).ready(function(){
-                      jQuery('#date_sold').datepicker();
-                  });
-              </script>";
 }
 
 // Initiate the plugin
