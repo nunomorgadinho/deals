@@ -380,6 +380,12 @@ function addcustomtype_admin_styles() {
 		</style>
 		\n";
     
+		echo "<script type='text/javascript'>
+                  jQuery(document).ready(function(){
+                      jQuery('#date_sold').datepicker();
+                  });
+              </script>";
+		
 	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
 	wp_register_script('textcounter', WP_ADDCUSTOMTYPE_URL . '/includes/js/textcounter.js');
 	wp_register_script('global',    WP_ADDCUSTOMTYPE_URL . '/includes/js/global.js');
@@ -396,90 +402,6 @@ function addcustomtype_admin_styles() {
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_script('mydatepicker');
-}
-
-// Changing the form enctype dynamicly 
-if ( is_admin() ) {
-    function add_post_enctype() {
-	    	echo "
-		<style type='text/css' media='all'>
-	    	@import '".WP_ADDCUSTOMTYPE_URL."/css/styles/blue.css';
-			@import '".WP_ADDCUSTOMTYPE_URL."/css/style.css';
-			@import '".WP_ADDCUSTOMTYPE_URL."/css/ie.css';
-			@import '".WP_ADDCUSTOMTYPE_URL."/css/iconified.css';
-			@import '".WP_ADDCUSTOMTYPE_URL."/includes/js/fancybox/jquery.fancybox.css';
-			@import '".WP_ADDCUSTOMTYPE_URL."/css/smoothness/jquery-ui-1.7.3.custom.css';
-		</style>
-		\n";
-	    ?>
-	    
-	    <script type="text/javascript">
-	    function validate_integer(input,msg)
-	    {
-	    	t = document.getElementById("err_msg");
-	    	t.innerHTML = "";
-	    	if (!isInteger(input.value) && input.value != "") 
-	    	{
-	    		t.innerHTML = msg;
-	    	} 
-	    }
-
-	    function isInteger(s) 
-	    {
-	    	if(s == "")
-	    		return true;
-	    		
-	    	return (s.toString().search(/^-?[0-9]+$/) == 0);
-	    }
-
-	    function validate_range(input,msg) {
-	    	result = true;
-	    	t = document.getElementById("err_msg");
-	    	t.innerHTML = "";
-	    	
-	    	min=document.getElementById("price_min");
-	    		
-	    		if (parseInt(min.value) > input.value) {
-	    			t.innerHTML = msg;
-	    		}
-	    	
-	    }
-	    
-		function validate_form(form) {
-			result = true;
-
-			with(form) {
-				result = isInteger(price_sold.value);
-				if(!result)
-				{
-					//If onsubmit fail, we shouldn't disable the publish button, the user needs to fix the fields and then publish
-					t = document.getElementById("ajax-loading");
-					t.style.visibility = "hidden";
-					b = document.getElementById("publish");
-					b.className = b.className.replace(/button-primary-disabled/g,'');			
-				}
-			}
-			
-			return result;
-		}
-
-		</script>
-	    
-	    <?php 
-        echo "<script type='text/javascript'>
-                  jQuery(document).ready(function(){
-                      jQuery('#post').attr('enctype','multipart/form-data');
-                      jQuery('#post').attr('onsubmit','return validate_form(this)');
-                      jQuery('#date_sold').datepicker();
-                  });
-              </script>";
-    }
-
-    if (($_SERVER['PHP_SELF'] == '/wp-admin/post-new.php') || 
-    	($_SERVER['PHP_SELF'] == '/wp-admin/post.php'))
-    {
-		add_action('admin_head', 'add_post_enctype');
-	}
 }
 
 // Initiate the plugin
