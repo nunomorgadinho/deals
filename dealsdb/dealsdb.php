@@ -397,6 +397,7 @@ function addcustomtype_admin_scripts()
 	wp_enqueue_script('iconified');
 	wp_enqueue_script('fancybox');
 	wp_enqueue_script('fancybox2');	
+	wp_enqueue_script('jquery');
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_script('mydatepicker');
