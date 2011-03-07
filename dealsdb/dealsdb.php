@@ -255,7 +255,15 @@ class DealsDb {
 	<br/><br/>
 	<b>Buyer</b><br/><br/>
 	Gallery or Dealer <small>(if public)</small><br/> <input type="text" class="adfields" id="buyer_name" size="52" maxlength="100" name="buyer_name" value="<?php if(isset($buyer_name)){echo $buyer_name;} ?>"></input>
+	<br/>
 
+	<?php 
+		if ($custom["images"][1])
+		{
+			echo '<b>Image</b><br/><br/>';
+			echo '<img src="'.$custom["images"][1].'" alt="image">';
+		}	
+	?>
 	</div>
 	
 	
@@ -497,7 +505,7 @@ function widget_assign($args) {
 				
 		<br/>
 		
-		<a href="/new-deal/">Add New</a>
+		<a href="/add-deal/">Add New</a>
 		</div>
 		
         <?php echo $after_widget; ?>
@@ -514,7 +522,7 @@ register_widget_control('Deals Database', 'widget_assign_control');
 
 function get_most_recent_deals()
 {
-	$args = array( 'post_type' => 'deal', 'posts_per_page' => 3 );
+	$args = array( 'post_type' => 'dealentry', 'posts_per_page' => 3 );
 	$loop = new WP_Query( $args );
 	while ( $loop->have_posts() ) : $loop->the_post();
 
@@ -534,7 +542,7 @@ function get_biggest_deal()
     AND wpostmeta.meta_key = 'price_sold' 
     AND wpostmeta.meta_value = '$0 - $50,000' 
     AND wposts.post_status = 'publish' 
-    AND wposts.post_type = 'deal' 
+    AND wposts.post_type = 'dealentry' 
     ORDER BY wposts.post_date DESC
  ";
 
