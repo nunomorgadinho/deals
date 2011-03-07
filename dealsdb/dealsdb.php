@@ -445,7 +445,7 @@ function widget_assign($args) {
 				
 		<br/>
 		
-		<a href="<?php echo get_option('site_url'); ?>/add-deal/">Add New</a>
+		<a href="<?php echo get_site_url(); ?>/add-deal/">Add New</a>
 		</div>
 		
         <?php echo $after_widget; ?>
