@@ -379,14 +379,12 @@ function addcustomtype_admin_styles() {
 			@import '".WP_ADDCUSTOMTYPE_URL."/includes/js/fancybox/jquery.fancybox.css';
 		</style>
 		\n";
-    
-		echo "<script type='text/javascript'>
-                  jQuery(document).ready(function(){
-                      jQuery('#date_sold').datepicker();
-                  });
-              </script>";
 		
 	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
+}
+
+function addcustomtype_admin_scripts()
+{
 	wp_register_script('textcounter', WP_ADDCUSTOMTYPE_URL . '/includes/js/textcounter.js');
 	wp_register_script('global',    WP_ADDCUSTOMTYPE_URL . '/includes/js/global.js');
 	wp_register_script('iconified', WP_ADDCUSTOMTYPE_URL . '/includes/js/iconified.js');
@@ -402,11 +400,18 @@ function addcustomtype_admin_styles() {
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_script('mydatepicker');
+	
+	echo "<script type='text/javascript'>
+                  jQuery(document).ready(function(){
+                      jQuery('#date_sold').datepicker();
+                  });
+              </script>";
 }
 
 // Initiate the plugin
 add_action("init", "DealsDbInit");
 add_action('admin_print_styles' , 'addcustomtype_admin_styles'); 
+add_action('admin_print_scripts' , 'addcustomtype_admin_scripts'); 
 add_action('wp_print_styles' , 'addcustomtype_styles'); 
 add_action('save_post', "my_wp_insert_post");
 
