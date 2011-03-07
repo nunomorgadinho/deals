@@ -356,13 +356,9 @@ function my_wp_insert_post(/*$post_id, $post = null*/)
 //Define plugin directories
 define( 'WP_ADDCUSTOMTYPE_URL', WP_PLUGIN_URL.'/'.plugin_basename(dirname(__FILE__)) );
 
-function addcustomtype_styles() {
-	echo "
-		<style type='text/css' media='all'>
-			@import '".WP_ADDCUSTOMTYPE_URL."/css/smoothness/jquery-ui-1.7.3.custom.css';
-		</style>
-		\n";
-				
+function addcustomtype_styles() 
+{	
+	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
 	wp_register_script('mydatepicker', WP_ADDCUSTOMTYPE_URL . '/js/ui.datepicker.js');
 	
 	wp_enqueue_script('jquery-ui-core');
