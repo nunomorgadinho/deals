@@ -163,20 +163,21 @@ class DealsDb {
 		global $post;
 		$custom = get_post_custom($post->ID);
 		
-		print_r($custom);
+		//print_r($custom);
 		
-		$length = $custom["length"][0];
-		$price_sold = $custom["price_sold"][0];
-		$date_sold = $custom["date_sold"][0];
-		$event = $custom["event"][0];
-		$work_title = $custom["work_title"][0];
-		$artist = $custom["artist"][0];
-		$work_type = $custom["work_type"][0];
-		$work_year = $custom["work_year"][0];
-		$buyer_name = $custom["buyer_name"][0];
-		$edition_min = $custom["edition_min"][0];
-		$edition_max = $custom["edition_max"][0];
-		$primary_or_secondary = $custom["primary_or_secondary"][0];
+		$length = (isset($custom["length"][0])) ? $custom["length"][0] : '';
+		$price_sold = (isset($custom["price_sold"][0])) ? $custom["price_sold"][0] : '';
+		$date_sold = (isset($custom["date_sold"][0])) ? $custom["date_sold"][0] : '';
+		$event = (isset($custom["event"][0])) ? $custom["event"][0] : '';
+		$work_title = (isset($custom["work_title"][0])) ? $custom["work_title"][0] : '';
+		$artist = (isset($custom["artist"][0])) ? $custom["artist"][0] : '';
+		$work_type = (isset($custom["work_type"][0])) ? $custom["work_type"][0] : '';
+		$work_year = (isset($custom["work_year"][0])) ? $custom["work_year"][0] : '';
+		$buyer_name = (isset($custom["buyer_name"][0])) ? $custom["buyer_name"][0] : '';
+		$edition_min = (isset($custom["edition_min"][0])) ? $custom["edition_min"][0] : '';
+		$edition_max = (isset($custom["edition_max"][0])) ? $custom["edition_max"][0] : '';
+		$primary_or_secondary = (isset($custom["primary_or_secondary"][0])) ? $custom["primary_or_secondary"][0] : '';										
+
 ?>
 	<div class="classform" id="formbox">
 	<div id="err_msg" style="background: red"></div>
@@ -198,7 +199,7 @@ class DealsDb {
 	function type_selected($type, $post)
 	{
 		$custom = get_post_custom($post->ID);
-		$types = $custom["work_type"];
+		$types = (isset($custom["work_type"])) ? $custom["work_type"] : '' ;
 		
 		for ($i=0; $i < count($types); $i++)
 		{
@@ -294,6 +295,7 @@ function my_wp_insert_post(/*$post_id, $post = null*/)
 
 	error_log("BLA BLA");
 		
+	if (empty($_POST['addcustomtype_noncename'])) $_POST['addcustomtype_noncename'] = '';
   	if ( !wp_verify_nonce( $_POST['addcustomtype_noncename'], plugin_basename(__FILE__) )) {
     	return $post_id;
   	}
@@ -516,8 +518,8 @@ function widget_assign_control() {
 
 }
 
-register_sidebar_widget('Deals Database', 'widget_assign');
-register_widget_control('Deals Database', 'widget_assign_control');
+wp_register_sidebar_widget('Deals Database', 'Deals Database', 'widget_assign');
+wp_register_widget_control('Deals Database', 'Deals Database', 'widget_assign_control');
 
 
 function get_most_recent_deals()
