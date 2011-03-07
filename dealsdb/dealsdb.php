@@ -478,7 +478,7 @@ if ( is_admin() ) {
 // Initiate the plugin
 add_action("init", "DealsDbInit");
 add_action('admin_init' , 'addcustomtype_admin_styles'); 
-add_action('init' , 'addcustomtype_styles'); 
+add_action('wp_print_styles' , 'addcustomtype_styles'); 
 add_action('save_post', "my_wp_insert_post");
 
 function DealsDbInit() { global $p30; $p30 = new DealsDb(); }
