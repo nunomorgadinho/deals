@@ -370,8 +370,8 @@ function addcustomtype_admin_styles() {
 	/*
 	 * It will be called only on your plugin admin page, enqueue our script here
      */
-	if (($_SERVER['PHP_SELF'] == '/wp-admin/post-new.php') || 
-    	($_SERVER['PHP_SELF'] == '/wp-admin/post.php'))
+	if (($_SERVER['PHP_SELF'] == '/wp-admin/post-new.php?post_type=dealentry') || 
+    	($_SERVER['PHP_SELF'] == '/wp-admin/post.php?post_type=dealentry'))
     {
 		echo "
 		<style type='text/css' media='all'>
