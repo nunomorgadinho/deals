@@ -361,6 +361,7 @@ function addcustomtype_styles()
 	wp_enqueue_style('my-style', WP_ADDCUSTOMTYPE_URL . '/css/smoothness/jquery-ui-1.7.3.custom.css');
 	wp_register_script('mydatepicker', WP_ADDCUSTOMTYPE_URL . '/js/ui.datepicker.js');
 	
+	wp_enqueue_script('jquery');
 	wp_enqueue_script('jquery-ui-core');
 	wp_enqueue_script('jquery-ui-dialog');
 	wp_enqueue_script('mydatepicker');
