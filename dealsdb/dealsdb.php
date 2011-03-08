@@ -247,13 +247,13 @@ class DealsDb {
 	<b>Deal</b><br/>
 	<label for="price_sold"><?php _e('Price Sold','admanager'); ?> </label>
 	<select name="price_sold">
-		<option value="Under $25k">Under $25k</option>
-		<option value="Under $100k">Under $100k</option>
-		<option value="Under $250k">Under $250k</option>
-		<option value="Under $600k">Under $600k</option>
-		<option value="Under $1m">Under $1m</option>
-		<option value="Under $2m">Under $2m</option>
-		<option value="Under $5m">Under $5m</option>
+		<option value="1">Under $25k</option>
+		<option value="2">Under $100k</option>
+		<option value="3">Under $250k</option>
+		<option value="4">Under $600k</option>
+		<option value="5">Under $1m</option>
+		<option value="6">Under $2m</option>
+		<option value="7">Under $5m</option>
 	</select>
 	<br/>
 	
@@ -439,7 +439,7 @@ function widget_assign($args) {
 		<?php get_most_recent_deals(); ?>
 		
 		<br/>
-		<h3>Biggest</h3>
+		<h3>Biggest Deal</h3>
 		
 		<?php get_biggest_deal(); ?>
 				
@@ -476,14 +476,14 @@ function get_biggest_deal()
 	global $wpdb;
 
 	$querystr = "
-    SELECT wposts.* 
+    SELECT wposts.ID, wpostmeta.* 
     FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta
     WHERE wposts.ID = wpostmeta.post_id 
     AND wpostmeta.meta_key = 'price_sold' 
-    AND wpostmeta.meta_value = '$0 - $50,000' 
     AND wposts.post_status = 'publish' 
     AND wposts.post_type = 'dealentry' 
     ORDER BY wposts.post_date DESC
+    LIMIT 1
  ";
 
 	 $pageposts = $wpdb->get_results($querystr, OBJECT);
@@ -492,7 +492,7 @@ function get_biggest_deal()
 	 
 	 
 	 if ($pageposts) {
-		 echo '<a href="'.get_permalink($pageposts['ID']).'">'; the_title(); echo '</a>';
+		 echo '<a href="'.get_permalink($pageposts[0]->ID).'">'.get_the_title($pageposts[0]->ID); echo '</a>';
 		echo '<br/>';
 	}
 }
