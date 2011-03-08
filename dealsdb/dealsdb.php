@@ -376,6 +376,9 @@ function addcustomtype_styles()
 }
 
 function addcustomtype_admin_styles() {
+	if ($_GET['mode'] == 'list')
+		return;
+	
 	/*
 	 * It will be called only on your plugin admin page, enqueue our script here
      */
