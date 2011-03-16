@@ -11,6 +11,8 @@ Author URI: http://www.artmarketmonitor.com/
 //translation support
 load_plugin_textdomain ( 'addcustomtype' , FALSE , '/addcustomtype/translations' );
 
+error_reporting(1);
+
 class DealsDb {
 	var $meta_fields = array("price_sold", "buyer_name", "date_sold", "event", "work_title", "artist", "work_type", "work_year", "primary_or_secondary", "edition_min", "edition_max");
 	
@@ -20,7 +22,7 @@ class DealsDb {
 		//add_action("manage_posts_custom_column", array(&$this, "custom_columns"));
 		
 		// Register custom taxonomy
-		register_taxonomy("deal", array("deal"), array("hierarchical" => true, "label" => __("Deal Categories",'addcustomtype'), "singular_label" => __("Deal Categories",'addcustomtype'), "rewrite" => true));
+		//register_taxonomy("deal", array("deal"), array("hierarchical" => true, "label" => __("Deal Categories",'addcustomtype'), "singular_label" => __("Deal Categories",'addcustomtype'), "rewrite" => true));
 					
 		// Register custom post types
 		register_post_type('dealentry', array(
@@ -38,8 +40,8 @@ class DealsDb {
 			'query_var' => "dealentry", // This goes to the WP_Query schema
 			'hierarchical' => false,
 			'taxonomies' => array("deal"),
-			'supports' => array('title', 
-								'editor', 
+			'supports' => array(//'title', 
+								//'editor', 
 								'thumbnail',
 								'price_sold',
 								'buyer_name',
@@ -172,7 +174,7 @@ class DealsDb {
 		$price_sold = (isset($custom["price_sold"][0])) ? $custom["price_sold"][0] : '';
 		$date_sold = (isset($custom["date_sold"][0])) ? $custom["date_sold"][0] : '';
 		$event = (isset($custom["event"][0])) ? $custom["event"][0] : '';
-		$work_title = (isset($custom["work_title"][0])) ? $custom["work_title"][0] : '';
+		$work_title = (isset($custom["post_title"][0])) ? $custom["post_title"][0] : '';
 		$artist = (isset($custom["artist"][0])) ? $custom["artist"][0] : '';
 		$work_type = (isset($custom["work_type"][0])) ? $custom["work_type"][0] : '';
 		$work_year = (isset($custom["work_year"][0])) ? $custom["work_year"][0] : '';
@@ -194,7 +196,7 @@ class DealsDb {
 	<input type="text" id="artist" class="adfields" name="artist" size="52" maxlength="100" value="<?php if(isset($artist)){echo $artist;} ?>" />		
 	<br/>
 	<?php _e('Title','admanager'); ?><br/>
-	<input type="text" name="work_title" class="adfields" size="52" maxlength="100" value="<?php if(isset($work_title)){echo $work_title;} ?>" > </input>
+	<input type="text" name="post_title" class="adfields" size="52" maxlength="100" value="<?php if(isset($work_title)){echo $work_title;} ?>" > </input>
 	<br/>
 	<label for="work_year"><?php _e('Year','addcustomtype'); ?> </label>
 	<input type="text" id="work_year" class="adfields" name="work_year" maxlength="4" value="<?php if(isset($work_year)){echo $work_year;} ?>" />	
@@ -248,31 +250,43 @@ class DealsDb {
 	<label for="price_sold"><?php _e('Price Sold','admanager'); ?> </label>
 	<select name="price_sold">
 		<option value="1">Under $25k</option>
-		<option value="2">Under $100k</option>
-		<option value="3">Under $250k</option>
-		<option value="4">Under $600k</option>
-		<option value="5">Under $1m</option>
-		<option value="6">Under $2m</option>
-		<option value="7">Under $5m</option>
+		<option value="2">$26k-$100k</option>
+		<option value="3">$101-$250k</option>
+		<option value="4">$251-$600k</option>
+		<option value="5">$601-$1m</option>
+		<option value="6">$1m-$2m</option>
+		<option value="7">$2m-$5m</option>
 	</select>
 	<br/>
 	
 	Date Sold <br/><input type="text" class="adfields" id="date_sold" name="date_sold" value="<?php if(isset($date_sold)){echo $date_sold;} ?>" ></input>
 	<br/>
 	<label for="event"><?php _e('Event/Art Fair','admanager'); ?> </label>
-	<input type="text" id="event" class="adfields" name="event" size="52" maxlength="100" value="<?php if(isset($event)){echo $event;} ?>" />
+							<select id="event" name="event">
+							<?php 
+								$array_options = array("[Art Fair]", "Art Basel", "ArtBasel Miami Beach", "ARCO", "Armary Show", "Frieze", "TEFAF");
+								
+								$checked = '';
+								foreach ($array_options as $option) {
+									if ($_POST['event'] == $option) {
+										$checked = 'selected';
+									}
+									echo '<option value="'.$option.'" '.$checked.'>'.$option.'</option>';
+									$checked = '';
+								}
+								
+							?>
+						
+						</select>
 	<br/><br/>
 	<b>Buyer</b><br/><br/>
 	Gallery or Dealer <small>(if public)</small><br/> <input type="text" class="adfields" id="buyer_name" size="52" maxlength="100" name="buyer_name" value="<?php if(isset($buyer_name)){echo $buyer_name;} ?>"></input>
 	<br/>
 
-	<?php 
-		if ($custom["images"][1])
-		{
-			echo '<b>Image</b><br/><br/>';
-			echo '<img src="'.$custom["images"][1].'" alt="image">';
-		}	
-	?>
+	<b>Comment</b><br/>
+	<textarea id="comment" name="comment" style="width: 470px; height: 100px" rows="2">
+	<?php if ($_POST['comment']) { echo $_POST['comment']; } ?>
+	</textarea>
 	</div>
 	
 	
@@ -376,8 +390,7 @@ function addcustomtype_styles()
 }
 
 function addcustomtype_admin_styles() {
-	if ($_GET['mode'] == 'list')
-		return;
+	
 	
 	/*
 	 * It will be called only on your plugin admin page, enqueue our script here
