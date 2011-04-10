@@ -14,7 +14,7 @@ load_plugin_textdomain ( 'addcustomtype' , FALSE , '/addcustomtype/translations'
 error_reporting(1);
 
 class DealsDb {
-	var $meta_fields = array("price_sold", "buyer_name", "date_sold", "event", "work_title", "artist", "work_type", "work_year", "primary_or_secondary", "edition_min", "edition_max");
+	var $meta_fields = array("price_sold", "buyer_name", "date_sold", "artist", "work_type", "work_year", "primary_or_secondary", "edition_min", "edition_max");
 	
 	function DealsDb()
 	{
@@ -22,7 +22,36 @@ class DealsDb {
 		//add_action("manage_posts_custom_column", array(&$this, "custom_columns"));
 		
 		// Register custom taxonomy
-		//register_taxonomy("deal", array("deal"), array("hierarchical" => true, "label" => __("Deal Categories",'addcustomtype'), "singular_label" => __("Deal Categories",'addcustomtype'), "rewrite" => true));
+		 $labels = array(
+						    'name' => _x( 'gallery', 'taxonomy general name' ),
+						    'singular_name' => _x( 'Gallery', 'taxonomy singular name' ),
+						    'search_items' =>  __( 'Search Galleries' ),
+						    'all_items' => __( 'All Galleries' ),
+						    'parent_item' => __( 'Parent Gallery' ),
+						    'parent_item_colon' => __( 'Parent Gallery:' ),
+						    'edit_item' => __( 'Edit Gallery' ), 
+						    'update_item' => __( 'Update Gallery' ),
+						    'add_new_item' => __( 'Add New Gallery' ),
+						    'new_item_name' => __( 'New Gallery Name' ),
+						    'menu_name' => __( 'Galleries' ),
+						  ); 
+						  
+		 $labels2 = array(
+						    'name' => _x( 'artfair', 'taxonomy general name' ),
+						    'singular_name' => _x( 'Art Fair', 'taxonomy singular name' ),
+						    'search_items' =>  __( 'Search Art Fairs' ),
+						    'all_items' => __( 'All Art Fairs' ),
+						    'parent_item' => __( 'Parent Art Fair' ),
+						    'parent_item_colon' => __( 'Parent Art Fair:' ),
+						    'edit_item' => __( 'Edit Art Fair' ), 
+						    'update_item' => __( 'Update Art Fair' ),
+						    'add_new_item' => __( 'Add New Art Fair' ),
+						    'new_item_name' => __( 'New Art Fair Name' ),
+						    'menu_name' => __( 'Art Fairs' ),
+						  ); 
+						  
+		register_taxonomy("gallery", array("gallery"), array("hierarchical" => true, "label" => __("Galeries",'addcustomtype'), "labels" => $labels, "singular_label" => __("Gallery",'addcustomtype'), "rewrite" => true));
+		register_taxonomy("artfair", array("artfair"), array("hierarchical" => true, "label" => __("Art Fairs",'addcustomtype'), "labels" => $labels2, "singular_label" => __("Art Fair",'addcustomtype'), "rewrite" => true));
 					
 		// Register custom post types
 		register_post_type('dealentry', array(
@@ -39,14 +68,13 @@ class DealsDb {
 			'rewrite' => false,
 			'query_var' => "dealentry", // This goes to the WP_Query schema
 			'hierarchical' => false,
-			'taxonomies' => array("deal"),
+			'taxonomies' => array("gallery","artfair"),
 			'supports' => array(//'title', 
 								//'editor', 
 								'thumbnail',
 								'price_sold',
 								'buyer_name',
 								'date_sold',
-								'event',
 								'work_title',
 								'artist',
 								'work_type',
@@ -57,7 +85,10 @@ class DealsDb {
 		));
 		
 		// Admin interface init
-		add_action("admin_init", array(&$this, "admin_init"));
+		add_action("admin_init", array(&$this, "admin_init"));		
+		//add_action('save_post', array(&$this, "my_wp_insert_post"));
+		//add_action('edit_post', array(&$this, "my_wp_insert_post"));
+		
 //		add_action("template_redirect", array(&$this, 'template_redirect'));
 		
 	}
@@ -72,7 +103,6 @@ class DealsDb {
 			"sale" => "Sale",
 			'price_sold' => "price_sold",
 			'date_sold' => "date_sold",
-			'event' => "Event",
 			'work_title' => "Title of Work",
 			'artist' => "Artist",
 			'buyer_name' => "Buyer's Name",
@@ -115,10 +145,6 @@ class DealsDb {
 			case "buyer_name":
 				$custom = get_post_custom();
 				echo $custom["buyer_name"][0];
-				break;
-			case "event":
-				$custom = get_post_custom();
-				echo $custom["event"][0];
 				break;
 			case "work_title":
 				$custom = get_post_custom();
@@ -173,8 +199,7 @@ class DealsDb {
 		$length = (isset($custom["length"][0])) ? $custom["length"][0] : '';
 		$price_sold = (isset($custom["price_sold"][0])) ? $custom["price_sold"][0] : '';
 		$date_sold = (isset($custom["date_sold"][0])) ? $custom["date_sold"][0] : '';
-		$event = (isset($custom["event"][0])) ? $custom["event"][0] : '';
-		$work_title = (isset($custom["post_title"][0])) ? $custom["post_title"][0] : '';
+		$work_title = $post->post_title;
 		$artist = (isset($custom["artist"][0])) ? $custom["artist"][0] : '';
 		$work_type = (isset($custom["work_type"][0])) ? $custom["work_type"][0] : '';
 		$work_year = (isset($custom["work_year"][0])) ? $custom["work_year"][0] : '';
@@ -247,40 +272,39 @@ class DealsDb {
 	<br/>
 	<br/>
 	<b>Deal</b><br/>
-	<label for="price_sold"><?php _e('Price Sold','admanager'); ?> </label>
-	<select name="price_sold">
-		<option value="1">Under $25k</option>
-		<option value="2">$26k-$100k</option>
-		<option value="3">$101-$250k</option>
-		<option value="4">$251-$600k</option>
-		<option value="5">$601-$1m</option>
-		<option value="6">$1m-$2m</option>
-		<option value="7">$2m-$5m</option>
-	</select>
+	
+	<?php 
+	$price_mark = '';
+	
+	if (($price_sold > 0) && ($price_sold < 25000))
+	{
+		$price_mark = 'Emerging';
+	} elseif (($price_sold >= 25000) && ($price_sold < 75000))
+	{
+		$price_mark = 'Established';
+	} elseif (($price_sold >= 75000) && ($price_sold < 250000))
+	{
+		$price_mark = 'Significant';
+	} elseif (($price_sold >= 250000) && ($price_sold < 750000))
+	{
+		$price_mark = 'Conviction Buy';
+	} elseif ($price_sold >= 750000)
+	{
+		$price_mark = 'Investment Grade';
+	}
+	?>
+	
+	<label for="price_sold"><?php _e('Price Sold in USD Dollars','admanager'); ?> </label>
+	<input type="text" class="adfields" name="price_sold" value="<?php if (isset($price_sold)) echo $price_sold; ?>"></input> (<?php echo $price_mark; ?>)
+
 	<br/>
 	
 	Date Sold <br/><input type="text" class="adfields" id="date_sold" name="date_sold" value="<?php if(isset($date_sold)){echo $date_sold;} ?>" ></input>
 	<br/>
-	<label for="event"><?php _e('Event/Art Fair','admanager'); ?> </label>
-							<select id="event" name="event">
-							<?php 
-								$array_options = array("[Art Fair]", "Art Basel", "ArtBasel Miami Beach", "ARCO", "Armary Show", "Frieze", "TEFAF");
-								
-								$checked = '';
-								foreach ($array_options as $option) {
-									if ($_POST['event'] == $option) {
-										$checked = 'selected';
-									}
-									echo '<option value="'.$option.'" '.$checked.'>'.$option.'</option>';
-									$checked = '';
-								}
-								
-							?>
-						
-						</select>
+
 	<br/><br/>
 	<b>Buyer</b><br/><br/>
-	Gallery or Dealer <small>(if public)</small><br/> <input type="text" class="adfields" id="buyer_name" size="52" maxlength="100" name="buyer_name" value="<?php if(isset($buyer_name)){echo $buyer_name;} ?>"></input>
+	Buyer Name <small>(if public)</small><br/> <input type="text" class="adfields" id="buyer_name" size="52" maxlength="100" name="buyer_name" value="<?php if(isset($buyer_name)){echo $buyer_name;} ?>"></input>
 	<br/>
 
 	<b>Comment</b><br/>
@@ -309,7 +333,7 @@ function my_wp_insert_post(/*$post_id, $post = null*/)
 	error_log("HELLO");
 			
 	global $post;
-	$meta_fields = array("price_sold", "buyer_name", "date_sold", "event", "work_title", "artist", "work_type", "work_year", "images", "edition_min", "edition_max", "primary_or_secondary");
+	$meta_fields = array("price_sold", "buyer_name", "date_sold", "artist", "work_type", "work_year", "images", "edition_min", "edition_max", "primary_or_secondary");
 	$post_id = $post->ID;
 		
 	// verify this came from the our screen and with proper authorization,
