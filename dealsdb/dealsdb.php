@@ -206,7 +206,8 @@ class DealsDb {
 		$buyer_name = (isset($custom["buyer_name"][0])) ? $custom["buyer_name"][0] : '';
 		$edition_min = (isset($custom["edition_min"][0])) ? $custom["edition_min"][0] : '';
 		$edition_max = (isset($custom["edition_max"][0])) ? $custom["edition_max"][0] : '';
-		$primary_or_secondary = (isset($custom["primary_or_secondary"][0])) ? $custom["primary_or_secondary"][0] : '';										
+		$primary_or_secondary = (isset($custom["primary_or_secondary"][0])) ? $custom["primary_or_secondary"][0] : '';		
+		$estimated_price_range = (isset($custom["estimated_price_range"][0])) ? $custom["estimated_price_range"][0] : '';								
 
 		echo "<script type='text/javascript'>
                   jQuery(document).ready(function(){
@@ -273,29 +274,17 @@ class DealsDb {
 	<br/>
 	<b>Deal</b><br/>
 	
-	<?php 
-	$price_mark = '';
-	
-	if (($price_sold > 0) && ($price_sold < 25000))
-	{
-		$price_mark = 'Emerging';
-	} elseif (($price_sold >= 25000) && ($price_sold < 75000))
-	{
-		$price_mark = 'Established';
-	} elseif (($price_sold >= 75000) && ($price_sold < 250000))
-	{
-		$price_mark = 'Significant';
-	} elseif (($price_sold >= 250000) && ($price_sold < 750000))
-	{
-		$price_mark = 'Conviction Buy';
-	} elseif ($price_sold >= 750000)
-	{
-		$price_mark = 'Investment Grade';
-	}
-	?>
 	
 	<label for="price_sold"><?php _e('Price Sold in USD Dollars','admanager'); ?> </label>
-	<input type="text" class="adfields" name="price_sold" value="<?php if (isset($price_sold)) echo $price_sold; ?>"></input> (<?php echo $price_mark; ?>)
+	<input type="text" class="adfields" name="price_sold" value="<?php if (isset($price_sold)) echo $price_sold; ?>"></input> 
+	<br/>Estimated range:<br/>
+	<select name="estimated_price_range" style="width: 150px">
+		<option <?php if($estimated_price_range == "Emerging") echo 'selected=\"selected\"' ?> value="Emerging">Emerging ($0-$25,000)</option>
+		<option <?php if($estimated_price_range == "Established") echo 'selected=\"selected\"' ?>  value="Established">Established ($25-75,000)</option>
+		<option <?php if($estimated_price_range == "Significant") echo 'selected=\"selected\"' ?>  value="Significant">Significant ($75,000 - $250,000)</option>
+		<option <?php if($estimated_price_range == "Conviction Buy") echo 'selected=\"selected\"' ?>  value="Conviction Buy">Conviction Buy ($250,000 - $750,000)</option>
+		<option <?php if($estimated_price_range == "Investment Grade") echo 'selected=\"selected\"' ?>  value="Investment Grade">Investment Grade ($750k and above)</option>
+	</select> 
 
 	<br/>
 	
@@ -333,7 +322,7 @@ function my_wp_insert_post(/*$post_id, $post = null*/)
 	error_log("HELLO");
 			
 	global $post;
-	$meta_fields = array("price_sold", "buyer_name", "date_sold", "artist", "work_type", "work_year", "images", "edition_min", "edition_max", "primary_or_secondary");
+	$meta_fields = array("price_sold", "estimated_price_range", "buyer_name", "date_sold", "artist", "work_type", "work_year", "images", "edition_min", "edition_max", "primary_or_secondary");
 	$post_id = $post->ID;
 		
 	// verify this came from the our screen and with proper authorization,
